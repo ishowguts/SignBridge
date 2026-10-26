@@ -1,0 +1,7 @@
+{
+  "prototypes": 560,
+  "threshold": 0.6995,
+  "real_test_kept_pct": 95.6,
+  "mixed_hands_rejected_pct": 99.3,
+  "bent_fingers_rejected_pct": 99.55
+}

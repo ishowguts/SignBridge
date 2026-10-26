@@ -1,0 +1,15 @@
+flowchart TB
+  D[Dashboard<br/>status + summary] -->|Start Recognition| L
+  S[Supported Signs<br/>search, filter, photos] -->|Practise on camera| L
+  L[Live Recognition<br/>mode: Camera ML / Demo] -->|Start Camera K| C{Camera<br/>permission}
+  C -->|denied / missing / busy| E[Error message<br/>+ Retry or Demo mode]
+  C -->|granted| R[Recognising<br/>hands + live guess + confidence]
+  R -->|9 of 12 frames agree<br/>and conf ≥ 60%| OK[Result card<br/>sign, reference photo, top-3]
+  R -->|Capture now Enter<br/>conf < 60%| U[Uncertain<br/>closest guesses]
+  U -->|Try again R| R
+  OK -->|Confirm C| T[Saved toast<br/>Undo U / View history]
+  OK -->|Incorrect X| X[Pick intended sign] --> T
+  OK -->|Try again R| R
+  T -->|Undo| OK
+  T -->|View history| H[History<br/>search, filter, delete + Undo]
+  N[Sidebar on every page<br/>? shortcuts dialog] -.-> D & S & L & H

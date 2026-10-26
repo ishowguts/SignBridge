@@ -1,0 +1,146 @@
+{
+  "dataset": {
+    "images_total": 42745,
+    "duplicate_copy_files_removed": 358,
+    "images_used": 42387,
+    "hands_detected_pct": 98.79,
+    "per_class_detected_pct": {
+      "1": 100.0,
+      "2": 100.0,
+      "3": 100.0,
+      "4": 100.0,
+      "5": 100.0,
+      "6": 100.0,
+      "7": 100.0,
+      "8": 100.0,
+      "9": 100.0,
+      "A": 100.0,
+      "B": 99.5,
+      "C": 93.9,
+      "D": 100.0,
+      "E": 100.0,
+      "F": 100.0,
+      "G": 100.0,
+      "H": 100.0,
+      "I": 100.0,
+      "J": 100.0,
+      "K": 100.0,
+      "L": 100.0,
+      "M": 100.0,
+      "N": 100.0,
+      "O": 98.2,
+      "P": 100.0,
+      "Q": 84.5,
+      "R": 100.0,
+      "S": 82.8,
+      "T": 100.0,
+      "U": 100.0,
+      "V": 98.9,
+      "W": 100.0,
+      "X": 100.0,
+      "Y": 100.0,
+      "Z": 100.0
+    },
+    "per_class_two_hand_pct": {
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0,
+      "5": 0.0,
+      "6": 0.0,
+      "7": 0.2,
+      "8": 0.0,
+      "9": 0.0,
+      "A": 100.0,
+      "B": 81.7,
+      "C": 0.1,
+      "D": 100.0,
+      "E": 100.0,
+      "F": 100.0,
+      "G": 86.6,
+      "H": 97.2,
+      "I": 0.0,
+      "J": 3.2,
+      "K": 99.8,
+      "L": 0.0,
+      "M": 100.0,
+      "N": 51.6,
+      "O": 0.4,
+      "P": 81.5,
+      "Q": 2.0,
+      "R": 30.8,
+      "S": 55.8,
+      "T": 99.8,
+      "U": 8.1,
+      "V": 0.1,
+      "W": 99.2,
+      "X": 100.0,
+      "Y": 91.9,
+      "Z": 98.8
+    },
+    "train_size": 33496,
+    "train_size_with_mirror": 66992,
+    "test_size": 8377,
+    "features": 85
+  },
+  "models": {
+    "kNN (k=5)": {
+      "accuracy": 97.79,
+      "macro_f1": 97.32,
+      "mirrored_test_accuracy": 97.79,
+      "train_seconds": 0.0,
+      "ms_per_sample": 0.206
+    },
+    "Random Forest": {
+      "accuracy": 97.88,
+      "macro_f1": 97.46,
+      "mirrored_test_accuracy": 97.84,
+      "train_seconds": 63.8,
+      "ms_per_sample": 0.02
+    },
+    "SVM (RBF)": {
+      "accuracy": 97.88,
+      "macro_f1": 97.43,
+      "mirrored_test_accuracy": 97.88,
+      "train_seconds": 3.0,
+      "ms_per_sample": 0.29
+    },
+    "MLP (128-64)": {
+      "accuracy": 97.86,
+      "macro_f1": 97.42,
+      "mirrored_test_accuracy": 97.86,
+      "train_seconds": 10.7,
+      "ms_per_sample": 0.001
+    },
+    "MLP (128-64), random split (leaky, reference only)": {
+      "accuracy": 99.95
+    }
+  },
+  "top_confusions_true_pred": [
+    [
+      172,
+      "9",
+      "S"
+    ],
+    [
+      4,
+      "9",
+      "C"
+    ],
+    [
+      1,
+      "T",
+      "Q"
+    ],
+    [
+      1,
+      "T",
+      "C"
+    ],
+    [
+      1,
+      "S",
+      "L"
+    ]
+  ]
+}

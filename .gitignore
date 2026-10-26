@@ -1,0 +1,7 @@
+node_modules
+dist
+.DS_Store
+ml/data
+ml/.venv
+ml/__pycache__
+ml/hand_landmarker.task

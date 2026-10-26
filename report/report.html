@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>SignBridge Project Report</title>
+<style>
+  @page { size: A4; margin: 22mm 18mm 20mm 18mm; }
+  body { font-family: "Times New Roman", Times, serif; font-size: 11.5pt; line-height: 1.42; color: #111; }
+  h1 { font-size: 17pt; margin: 0 0 8pt; page-break-after: avoid; }
+  h2 { font-size: 13pt; margin: 14pt 0 6pt; page-break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 10pt 0 4pt; page-break-after: avoid; }
+  p { margin: 0 0 7pt; text-align: justify; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9.6pt; page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  th, td { border: 1px solid #555; padding: 3.5pt 5pt; vertical-align: top; text-align: left; }
+  th { background: #e8e8e8; }
+  figure { margin: 8pt 0 12pt; text-align: center; page-break-inside: avoid; }
+  figure img { max-width: 100%; border: 1px solid #999; }
+  figcaption { font-size: 9.5pt; font-style: italic; margin-top: 3pt; }
+  .pb { page-break-before: always; }
+  .title { text-align: center; padding-top: 70pt; }
+  .title .big { font-size: 26pt; font-weight: bold; letter-spacing: 1pt; line-height: 1.25; }
+  .title .sub { font-size: 13pt; margin-top: 14pt; }
+  .todo { border: 2px dashed #c00; background: #fff4f4; padding: 8pt; color: #900; font-family: Arial, sans-serif; font-size: 10pt; margin: 6pt 0 10pt; }
+  .toc td { border: none; padding: 2pt 0; font-size: 11pt; }
+  .pair { display: flex; gap: 8pt; align-items: flex-start; page-break-inside: avoid; }
+  .pair figure { flex: 1; margin: 4pt 0; }
+  ul { margin: 2pt 0 8pt 16pt; padding: 0; }
+  li { margin-bottom: 2pt; }
+  code { font-family: Consolas, monospace; font-size: 9.5pt; }
+  .layer { border: 1px solid #555; padding: 5pt 8pt; margin: 0 40pt; text-align: center; font-size: 10pt; }
+  .arrow { text-align: center; font-size: 12pt; line-height: 1.1; }
+</style></head><body>
+
+<!-- ===================== TITLE ===================== -->
+<div class="title">
+  <div class="big">SIGNBRIDGE<br>REAL-TIME INDIAN SIGN LANGUAGE<br>RECOGNITION IN THE BROWSER</div>
+  <div class="sub"><b>PROJECT REPORT</b></div>
+  <div class="sub">Human-Computer Interaction (HCI) Continuous Evaluation Assignment</div>
+  <div class="sub" style="font-size:11pt">On-device recognition of static ISL fingerspelling (A–Z, 1–9) with MediaPipe hand landmarks and a neural-network classifier</div>
+  <div class="sub" style="margin-top:60pt"><b>TEAM MEMBERS</b></div>
+  <table style="width:60%;margin:8pt auto;font-size:11.5pt">
+    <tr><td>1. Bittu Mandal</td><td>MIS 112415048</td></tr>
+    <tr><td>2. Chinmay Ghule</td><td>MIS 112415054</td></tr>
+    <tr><td>3. Dev Krishan</td><td>MIS 112415057</td></tr>
+    <tr><td>4. Himanshu Raj</td><td>MIS 112415082</td></tr>
+  </table>
+  <div class="sub" style="font-size:11pt;margin-top:40pt">Indian Institute of Information Technology, Pune</div>
+</div>
+
+<!-- ===================== CONTENTS ===================== -->
+<div class="pb"></div>
+<h1>Contents</h1>
+<table class="toc">
+<tr><td>1. Abstract</td></tr><tr><td>2. Introduction</td></tr><tr><td>3. Identification of User Groups</td></tr>
+<tr><td>4. User Survey and Questionnaire</td></tr><tr><td>5. User Persona Development</td></tr><tr><td>6. Literature Review</td></tr>
+<tr><td>7. Research Gaps</td></tr><tr><td>8. Requirements</td></tr><tr><td>9. System Architecture</td></tr>
+<tr><td>10. Dataset and Model Training</td></tr><tr><td>11. Use Cases</td></tr><tr><td>12. Wireframes and Interaction Design</td></tr>
+<tr><td>13. Working Prototype</td></tr><tr><td>14. Research Poster</td></tr><tr><td>15. Testing and Results</td></tr>
+<tr><td>16. Conclusion and Future Scope</td></tr><tr><td>17. References</td></tr>
+</table>
+<h2>Abbreviations</h2>
+<table>
+<tr><th>Abbreviation</th><th>Meaning</th></tr>
+<tr><td>HCI</td><td>Human–Computer Interaction</td></tr>
+<tr><td>ISL</td><td>Indian Sign Language</td></tr>
+<tr><td>ML</td><td>Machine learning</td></tr>
+<tr><td>MLP</td><td>Multilayer perceptron (feed-forward neural network)</td></tr>
+<tr><td>RBF / SVM</td><td>Radial basis function / Support vector machine</td></tr>
+<tr><td>kNN</td><td>k-nearest neighbours</td></tr>
+<tr><td>WASM</td><td>WebAssembly</td></tr>
+<tr><td>UI</td><td>User interface</td></tr>
+</table>
+
+<!-- ===================== 1 ABSTRACT ===================== -->
+<div class="pb"></div>
+<h1>1. Abstract</h1>
+<p>SignBridge is a web application that recognises static Indian Sign Language (ISL) signs from a webcam and shows the meaning as large text and speech. It covers the 35 static fingerspelling signs A–Z and 1–9. Each video frame goes through MediaPipe Hand Landmarker, which finds up to two hands and 21 key points per hand. The points are normalised into an 85-value feature vector and classified by a small multilayer perceptron (85-128-64-35). The model was trained with scikit-learn on a public dataset of 42,745 ISL images. The 358 duplicated files were removed, and landmarks were found in 98.79% of the remaining images. On a held-out test set of 8,377 images the MLP reached <b>97.86% accuracy</b> (macro-F1 97.42%). The split was designed so that near-duplicate video frames cannot appear in both training and test data. Inference runs fully in the browser, so camera frames never leave the user's device.</p>
+<p>The interface was designed through a user-centred process: identification of user groups, a ten-question survey of 10 respondents, personas, a literature review and research-gap analysis, then low-fidelity wireframes and a working prototype. All eight of Shneiderman's Golden Rules are applied and documented. Examples are keyboard shortcuts, live feedback with a hand skeleton and confidence bar, a confidence threshold that shows an "uncertain" state instead of a wrong answer, and Undo for every saving or deleting action.</p>
+<p><b>Keywords:</b> Indian Sign Language, sign language recognition, MediaPipe, hand landmarks, multilayer perceptron, on-device inference, accessibility, human-computer interaction, Shneiderman's golden rules, wireframes.</p>
+
+<!-- ===================== 2 INTRODUCTION ===================== -->
+<h1>2. Introduction</h1>
+<h3>2.1 Purpose</h3>
+<p>The purpose of the system is to help a person who signs ISL and a person who does not know ISL communicate short, exact information such as names, spellings, numbers and codes. The camera recognises fingerspelled letters and numbers and shows them as text and speech. The same tool helps learners practise ISL fingerspelling against reference photos.</p>
+<h3>2.2 Scope</h3>
+<p>The system recognises the 35 static ISL signs A–Z and 1–9 from a live webcam, one sign at a time. It includes the dataset preparation and model-training pipeline, the in-browser recognition pipeline, result confirmation and correction, history, a reference vocabulary and accessibility settings. It does not translate sentences or recognise word signs that need movement or facial expression. It is not a certified interpreter.</p>
+<h3>2.3 Objectives</h3>
+<ul>
+<li>Train a lightweight classifier for static ISL signs on hand-landmark features and measure its accuracy honestly on held-out data.</li>
+<li>Run detection and classification on the user's device in real time, without uploading video.</li>
+<li>Present results so that users can see how sure the system is, and correct, undo or retry easily.</li>
+<li>Design the interface around the needs of identified user groups, using a user survey, personas, wireframes and Shneiderman's Eight Golden Rules.</li>
+</ul>
+<h3>2.4 Problem statement</h3>
+<p>Deaf and hard-of-hearing people who use ISL often meet hearing people who do not know any ISL, such as shopkeepers, office staff and classmates. Without an interpreter, exact information like a name, a phone number or a room number is slow to pass on and easy to get wrong. Existing research systems report recognition accuracy but rarely ask how the result should be shown to users, or what should happen when the system is wrong.</p>
+<h3>2.5 Research question</h3>
+<p>How can a camera-based ISL recogniser present its output so that both signers and non-signers can trust it, notice when it is unsure, and correct it quickly?</p>
+
+<!-- ===================== 3 USER GROUPS ===================== -->
+<h1>3. Identification of User Groups</h1>
+<h3>3.1 Problem relevance and context</h3>
+<p>ISL is the main language of many Deaf people in India, while very few hearing people know it. Fingerspelling is used for names, places, numbers and words that have no sign. These are exactly the items that are hardest to guess from gestures or lip reading. A phone or laptop camera is now available almost everywhere, so a tool that turns fingerspelling into text could be used at a shop counter, in a classroom or at home.</p>
+<h3>3.2 Target user groups</h3>
+<table>
+<tr><th>User group</th><th>Who they are</th><th>Characteristics</th><th>Needs</th><th>Context of use</th></tr>
+<tr><td><b>ISL users</b> (primary)</td><td>Deaf or hard-of-hearing people who sign ISL</td><td>Fluent in ISL; varying reading skill in English; experienced with phones; used to being misunderstood</td><td>Be understood quickly when spelling names or numbers; see that the system read the sign correctly; not depend on another person</td><td>Shops, offices, hospitals, college; mostly phone or laptop; often in a hurry</td></tr>
+<tr><td><b>Hearing communication partners</b> (primary)</td><td>Family members, classmates, teachers, shop and office staff</td><td>Know no ISL or only a few signs; no technical background</td><td>A large, clear text (and spoken) answer; know when the answer may be wrong; very few steps</td><td>Counter or desk, laptop or shared screen; short interactions</td></tr>
+<tr><td><b>ISL learners</b> (secondary)</td><td>Students and trainees learning fingerspelling</td><td>Motivated, comfortable with apps; unsure about hand shapes</td><td>Practise one sign at a time against a reference; immediate feedback on whether it matched</td><td>At home or in class on a laptop</td></tr>
+<tr><td><b>Technical evaluators</b> (secondary)</td><td>CS students, developers, instructors</td><td>Comfortable with ML concepts</td><td>See confidence, alternatives and how the model works; reproduce the results</td><td>Laptop at a desk</td></tr>
+</table>
+<p>The system is not intended for legal, medical or emergency communication, where a qualified interpreter is required.</p>
+
+<!-- ===================== 4 INTERVIEWS ===================== -->
+<h1>4. User Survey and Questionnaire</h1>
+<h3>4.1 Method</h3>
+<p>A ten-question questionnaire was prepared as a Google Form ("User Survey on SignBridge: Indian Sign Language Detection") and completed in person, on a phone, by 10 respondents on 25 October 2026 (Section 4.5). Every respondent answered the same questions (Section 4.2), so answers can be counted and compared. Each response is kept with its ID (R01–R10) in <code>docs/interviews.md</code> and the raw export in <code>docs/survey_responses.csv</code>. The answers were grouped into eight findings (Section 4.4), and each finding was linked to a design decision in the prototype.</p>
+<h3>4.2 Questionnaire</h3>
+<table>
+<tr><th>No.</th><th>Question</th><th>Response options</th><th>What it tells us</th></tr>
+<tr><td>Q1</td><td>Which category best describes you?</td><td>Deaf or hard of hearing; ISL user or learner; Hearing person who does not know ISL</td><td>User group</td></tr>
+<tr><td>Q2</td><td>How familiar are you with Indian Sign Language (ISL)?</td><td>Very familiar; Somewhat familiar; Know a few signs; Have heard of it but know no signs; Not familiar at all</td><td>Expertise</td></tr>
+<tr><td>Q3</td><td>How often do you interact with people who use sign language?</td><td>Daily; Monthly; Rarely; …</td><td>Relevance, context</td></tr>
+<tr><td>Q4</td><td>How difficult do you think communication can be between an ISL user and someone who does not know ISL?</td><td>Not difficult … Extremely difficult</td><td>Problem relevance</td></tr>
+<tr><td>Q5</td><td>Have you ever used a sign language recognition or translation application?</td><td>Yes, regularly; I have tried a similar tool; No, but I know about them; No, never</td><td>Current practice</td></tr>
+<tr><td>Q6</td><td>How useful would a system that recognises ISL signs through a camera and displays the corresponding words be?</td><td>1 (not useful) – 5 (very useful)</td><td>Perceived value</td></tr>
+<tr><td>Q7</td><td>Which output would be most useful to you?</td><td>Text on screen; Text-to-speech audio; Both text and speech; Visual sign demonstration</td><td>Output and feedback needs</td></tr>
+<tr><td>Q8</td><td>Which feature would be most important in such an application?</td><td>High recognition accuracy; Real-time results; Simple and accessible interface; Ability to correct wrong predictions; Privacy and camera control</td><td>Priorities</td></tr>
+<tr><td>Q9</td><td>What should the application do when it is unsure about a sign?</td><td>Show a message that the sign is uncertain; Ask the user to repeat the sign; Offer possible alternative words; Allow the user to type the intended message</td><td>Error handling, trust</td></tr>
+<tr><td>Q10</td><td>How likely would you be to use or recommend such a system if it worked reliably?</td><td>Very likely; Likely; Not sure; Unlikely; …</td><td>Adoption</td></tr>
+</table>
+<h3>4.3 Respondents</h3>
+<table>
+<tr><th>Group (Q1)</th><th>Count</th><th>IDs</th></tr>
+<tr><td>Hearing person who does not know ISL</td><td>5</td><td>R01, R03, R05, R07, R10</td></tr>
+<tr><td>ISL user or learner</td><td>3</td><td>R02, R04, R06</td></tr>
+<tr><td>Deaf or hard of hearing</td><td>2</td><td>R08, R09</td></tr>
+</table>
+<p>Familiarity with ISL (Q2): very familiar 1, somewhat familiar 1, know a few signs 2, heard of it but know no signs 2, not familiar at all 4. Contact with signers (Q3): daily 1, monthly 5, rarely 4. Some self-descriptions do not match the familiarity answer (for example, two "ISL user or learner" respondents and one "Deaf or hard of hearing" respondent report knowing no signs), so the group labels are treated as indicative only (Section 16).</p>
+<h3>4.4 Key findings</h3>
+<table>
+<tr><th>No.</th><th>Finding</th><th>What respondents said (count of 10)</th><th>How the prototype responds</th></tr>
+<tr><td>F1</td><td>The problem is real</td><td>Q4: 8 rated communication very (4) or extremely (4) difficult; 1 slightly, 1 not difficult. Q3: 6 meet signers monthly or daily.</td><td>Core task T1: recognise a sign and show it to the hearing partner in one step.</td></tr>
+<tr><td>F2</td><td>Text and speech together</td><td>Q7: both text and speech 5, speech only 2, text only 2, visual sign demonstration 1. So 7 want speech and 7 want text.</td><td>Large text result plus a Speak button (S); reference photo of the sign for the one who wanted a visual.</td></tr>
+<tr><td>F3</td><td>Correcting mistakes matters most</td><td>Q8: ability to correct wrong predictions was the most chosen feature (3).</td><td>Incorrect (X) with the intended sign, Try again (R), Undo (U) on every save or delete.</td></tr>
+<tr><td>F4</td><td>Simple, fast and private</td><td>Q8: simple and accessible interface 2, real-time results 2, privacy and camera control 2, high accuracy 1.</td><td>One main action per screen, live feedback about 12 times a second, camera only on request, all processing on the device.</td></tr>
+<tr><td>F5</td><td>Never guess silently when unsure</td><td>Q9: ask to repeat 4, let me type the message 3, show an "uncertain" message 2, offer alternatives 1. Nobody chose a silent best guess.</td><td>Below 60% confidence: uncertain state with Try again, closest guesses and a box to type the message and speak it.</td></tr>
+<tr><td>F6</td><td>Most have never used such a tool</td><td>Q5: 6 have never used one (2 never heard of them, 4 know of them); 3 tried a similar tool; 1 uses one regularly.</td><td>Guided first screen, hints and key labels on buttons, How It Works page, Demo mode without a camera.</td></tr>
+<tr><td>F7</td><td>Value must be earned by reliability</td><td>Q6: mean usefulness 3.0 / 5 (only 3 gave 4 or 5). Q10: 5 likely or very likely to use it if reliable, 4 not sure, 1 unlikely.</td><td>Honest scope banner, tested accuracy shown in the app, confidence on every result, uncertain state instead of wrong answers.</td></tr>
+<tr><td>F8</td><td>The experienced signer cares about accuracy</td><td>R09 (Deaf, very familiar with ISL, daily contact, uses apps regularly) rated usefulness 1, chose high accuracy and an "uncertain" message, yet would be very likely to use a reliable system.</td><td>Confidence threshold, 9-of-12 frame agreement, honest leak-free accuracy reporting (Section 10).</td></tr>
+</table>
+<h3>4.5 Evidence</h3>
+<p>All responses are kept unedited in <code>docs/survey_responses.csv</code> (exported from Google Forms with timestamps) and tabulated in <code>docs/interviews.md</code>. Photos were taken with the respondents' permission while they filled in the form.</p>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4pt;page-break-inside:avoid"><figure style="flex:1;margin:2pt"><img src="../docs/evidence/E01.jpg" style="height:190px;width:auto"></figure><figure style="flex:1;margin:2pt"><img src="../docs/evidence/E02.jpg" style="height:190px;width:auto"></figure><figure style="flex:1;margin:2pt"><img src="../docs/evidence/E03.jpg" style="height:190px;width:auto"></figure><figure style="flex:1;margin:2pt"><img src="../docs/evidence/E04.jpg" style="height:190px;width:auto"></figure><figure style="flex:1;margin:2pt"><img src="../docs/evidence/E05.jpg" style="height:190px;width:auto"></figure><figure style="flex:1;margin:2pt"><img src="../docs/evidence/E06.jpg" style="height:190px;width:auto"></figure></div>
+<figure><figcaption>Figures 4.1–4.6: in-person survey sessions (photos).</figcaption></figure>
+
+<!-- ===================== 5 PERSONAS ===================== -->
+<h1>5. User Persona Development</h1>
+<p>Three personas were built from the survey responses, one for each user group. Each is a composite: the name and age are illustrative, but every goal, need, pain point and behaviour comes from the responses listed under "Based on".</p>
+<table>
+<tr><th colspan="2">Persona 1: Meera, 24, Deaf ISL signer</th></tr>
+<tr><td style="width:22%">User group</td><td>Deaf or hard of hearing; fluent ISL user</td></tr>
+<tr><td>Goal</td><td>Get names, numbers and short words across to hearing people without depending on an interpreter.</td></tr>
+<tr><td>Needs</td><td>High recognition accuracy; clear text on screen; an honest "uncertain" message instead of a wrong word.</td></tr>
+<tr><td>Pain point</td><td>Finds communication extremely difficult; existing apps are not reliable enough, so she rates their usefulness low.</td></tr>
+<tr><td>Behaviour</td><td>Talks with hearing people daily; already uses sign language apps regularly; would very likely use a tool that works reliably.</td></tr>
+<tr><td>Usage context</td><td>Phone or laptop at a counter, office or college.</td></tr>
+<tr><td>Based on</td><td>R09, R08; findings F1, F5, F7, F8</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Persona 2: Rohit, 21, hearing classmate who does not know ISL</th></tr>
+<tr><td style="width:22%">User group</td><td>Hearing person who does not know ISL</td></tr>
+<tr><td>Goal</td><td>Understand a signing classmate or customer quickly during short conversations.</td></tr>
+<tr><td>Needs</td><td>Both text and speech; real-time results; a way to correct wrong predictions; when unsure, ask to repeat the sign.</td></tr>
+<tr><td>Pain point</td><td>Knows no or very few signs and thinks communication is very or extremely difficult; has never used a recognition app.</td></tr>
+<tr><td>Behaviour</td><td>Meets signers monthly or rarely; likely to use the app if it is reliable.</td></tr>
+<tr><td>Usage context</td><td>Laptop or phone in class or at work; quick, one-off interactions.</td></tr>
+<tr><td>Based on</td><td>R05, R07, R10, R01; findings F1, F2, F3, F4, F5, F6</td></tr>
+</table>
+<table>
+<tr><th colspan="2">Persona 3: Sana, 20, ISL learner</th></tr>
+<tr><td style="width:22%">User group</td><td>ISL user or learner, still at an early stage</td></tr>
+<tr><td>Goal</td><td>Practise signs and be understood while she is still learning.</td></tr>
+<tr><td>Needs</td><td>Speech output; a simple, accessible interface; privacy and control over the camera; a way to type the message when the sign is not recognised.</td></tr>
+<tr><td>Pain point</td><td>Unsure about hand shapes; has tried a similar tool before but is not sure she would keep using one.</td></tr>
+<tr><td>Behaviour</td><td>Meets signers monthly; rates the idea 3–4 out of 5.</td></tr>
+<tr><td>Usage context</td><td>At home or in class on a laptop.</td></tr>
+<tr><td>Based on</td><td>R02, R04, R06; findings F2, F4, F5, F6, F7</td></tr>
+</table>
+
+<!-- ===================== 6 LITERATURE ===================== -->
+<div class="pb"></div>
+<h1>6. Literature Review</h1>
+<p>Six sources were reviewed. Two cover sign language recognition as a field, two are specific to Indian Sign Language, one describes the hand-tracking method used here and one covers interface design principles. Section 6.1 compares them and Section 6.2 gives the insights for this project.</p>
+<h3>6.1 Comparison of approaches, findings and limitations</h3>
+<table>
+<tr><th style="width:17%">Paper</th><th>Approach</th><th>Key findings</th><th>Limitations</th><th>Relevance to this project</th></tr>
+<tr><td>[1] Bragg et al. (2019), <i>Sign Language Recognition, Generation, and Translation: An Interdisciplinary Perspective</i>, ASSETS '19</td><td>Report of a workshop of vision, linguistics, Deaf-culture and HCI experts; reviews the state of the art</td><td>Progress is held back by small datasets, little Deaf involvement and little attention to how output reaches users; calls for interdisciplinary, user-centred work</td><td>Position paper with no new system or measurements; mainly about ASL</td><td>Motivates designing confirmation, correction and uncertainty into the interface (gap 1)</td></tr>
+<tr><td>[2] Adeyanju, Bello and Adegboye (2021), <i>Machine learning methods for sign language recognition: A critical review and analysis</i>, Intelligent Systems with Applications</td><td>Bibliometric and technical review of 649 Scopus publications on vision-based recognition</td><td>Feature extraction followed by an ML classifier is the dominant approach; reliable recognition is "still an open problem"</td><td>Scopus only; compares methods, not user experience</td><td>Supports the landmark-features plus classifier design for static signs</td></tr>
+<tr><td>[3] Sridhar et al. (2020), <i>INCLUDE: A Large Scale Dataset for Indian Sign Language Recognition</i>, ACM Multimedia</td><td>4,287 videos of 263 ISL word signs by Deaf students; pose keypoints with deep models</td><td>94.5% accuracy on INCLUDE-50 and 85.6% on all 263 words</td><td>Word signs need video and motion models; recorded in one school</td><td>Shows the next step after static signs and why this project limits itself to fingerspelling (gap 3)</td></tr>
+<tr><td>[4] Velmathi G and Goyal (2023), <i>Indian Sign Language Recognition Using Mediapipe Holistic</i>, arXiv</td><td>MediaPipe Holistic keypoints with CNN and LSTM models</td><td>CNN better for static ISL letters; LSTM better for gesture-based phrases</td><td>Preprint; no interface or user evaluation</td><td>Supports MediaPipe keypoints for static ISL letters</td></tr>
+<tr><td>[5] Zhang et al. (2020), <i>MediaPipe Hands: On-device Real-time Hand Tracking</i>, arXiv / CVPR 2020 workshop</td><td>Palm detector plus hand-landmark model predicting 21 keypoints from one RGB camera</td><td>Real-time on mobile devices with high prediction quality</td><td>Harder with overlapping hands, blur and poor light</td><td>The landmark extractor used in training and in the browser; enables on-device privacy</td></tr>
+<tr><td>[6] Shneiderman et al. (2016), <i>Designing the User Interface</i>, 6th ed.</td><td>Design principles, including the Eight Golden Rules</td><td>Consistency, shortcuts, feedback, closure, error prevention, reversal, user control and low memory load improve usability</td><td>Expert guidelines; must be checked with users</td><td>Used to design and review every screen (Section 12.7)</td></tr>
+</table>
+<h3>6.2 Comparison and insights</h3>
+<p>The recognition papers [2], [3], [4] measure success by accuracy. Word-level ISL recognition [3] needs video models and large recorded datasets. Static letters can be recognised from one frame of hand keypoints [4], [5], which is light enough to run in a browser. Paper [1] points out what the accuracy-focused work leaves out: how users see, trust and fix the output, and the fact that datasets come from few signers, so real-world accuracy is lower than reported. This project therefore pairs a lightweight landmark classifier with an interface built around confidence, uncertainty and correction, designed with the rules in [6].</p>
+
+<!-- ===================== 7 GAPS ===================== -->
+<h1>7. Research Gaps</h1>
+<p>Each gap below is supported by the literature in Section 6 and by the user evidence in Section 4.4.</p>
+<table>
+<tr><th>No.</th><th>Research gap</th><th>Literature evidence</th><th>User evidence</th><th>How this project responds</th></tr>
+<tr><td>1</td><td>Recognition systems report accuracy, but not how results are shown to users or how wrong results are handled</td><td>[2], [3], [4] judge success by accuracy; [1] calls for user-centred design</td><td>F3, F5: correction is the top feature; nobody wants a silent guess</td><td>Large result with reference photo, confidence and top-3; uncertain state below 60%; Confirm / Incorrect with correction; Undo</td></tr>
+<tr><td>2</td><td>Recognition usually needs servers or heavy models, which raises privacy and connectivity barriers</td><td>[5] shows on-device hand tracking is possible; [3] uses heavy video models</td><td>F4: privacy and camera control, real-time results</td><td>Everything runs in the browser (WebAssembly + 0.46 MB MLP); no frames are uploaded or stored</td></tr>
+<tr><td>3</td><td>Word-level ISL needs motion models and large video datasets, which are not yet practical in a browser</td><td>[3] word signs need video; [4] static signs work from single frames</td><td>F1, F6: frequent contact, little prior tool use; learners need practice</td><td>Scope limited to static fingerspelling A–Z, 1–9, which covers names, numbers and spellings; word signs are future work</td></tr>
+<tr><td>4</td><td>Reported accuracy is optimistic because datasets come from few signers in controlled settings</td><td>[1] dataset limitations; frame leakage in random splits (Section 10)</td><td>F7, F8: usefulness only 3.0/5; the fluent signer wants accuracy</td><td>Blocked train/test split; leaky random-split figure reported separately; confidence threshold and correction flow in the UI</td></tr>
+</table>
+
+<!-- ===================== 8 REQUIREMENTS ===================== -->
+<h1>8. Requirements</h1>
+<p>The requirements below follow from the findings in Section 4.4. The last column names the finding each requirement responds to.</p>
+<h3>8.1 Functional requirements</h3>
+<table>
+<tr><th>No.</th><th>Functional requirement</th><th>Source</th></tr>
+<tr><td>1</td><td>Start and stop the camera only when the user asks; handle denied, missing and busy cameras with a clear message.</td><td>F4</td></tr>
+<tr><td>2</td><td>Detect up to two hands and recognise the 35 static ISL signs A–Z and 1–9 live from the camera.</td><td>F1, F6</td></tr>
+<tr><td>3</td><td>Show the recognised sign in large text with a reference photo, the confidence and the next most likely signs.</td><td>F2</td></tr>
+<tr><td>4</td><td>When confidence is below 60%, show an uncertain state with the closest guesses instead of a single answer.</td><td>F5</td></tr>
+<tr><td>5</td><td>Let the user confirm a result, mark it incorrect with the intended sign, retry, or hear it spoken.</td><td>F2, F3</td></tr>
+<tr><td>6</td><td>Save confirmed and corrected results to a searchable, filterable history; allow deleting one or all entries with Undo.</td><td>F3</td></tr>
+<tr><td>7</td><td>Show every supported sign with a reference photo and let the user practise a chosen sign.</td><td>F6</td></tr>
+<tr><td>8</td><td>When unsure, let the user type the intended message and have it spoken.</td><td>F5</td></tr>
+<tr><td>9</td><td>Provide a demo mode that works without a camera.</td><td>F6</td></tr>
+</table>
+<h3>8.2 Non-functional requirements</h3>
+<table>
+<tr><th>No.</th><th>Area</th><th>Non-functional requirement</th><th>Source</th></tr>
+<tr><td>1</td><td>Privacy</td><td>No camera frame leaves the device; only label, confidence, time and feedback are stored locally.</td><td>F4</td></tr>
+<tr><td>2</td><td>Performance</td><td>Detection about 12 times per second; a held sign locks in about one second.</td><td>F4</td></tr>
+<tr><td>3</td><td>Offline</td><td>All models and WebAssembly files are served with the app; no external service is called.</td><td>F4</td></tr>
+<tr><td>4</td><td>Accessibility</td><td>Keyboard operable, ARIA labels and live regions, large-text and reduced-motion settings, dark mode, colour never the only cue.</td><td>F2, F4</td></tr>
+<tr><td>5</td><td>Efficiency</td><td>Single-key shortcuts for every frequent action.</td><td>F4</td></tr>
+<tr><td>6</td><td>Reproducibility</td><td>The model can be retrained from public data with two scripts; the browser maths is checked against scikit-learn.</td><td>Project team</td></tr>
+</table>
+
+<!-- ===================== 9 ARCHITECTURE ===================== -->
+<div class="pb"></div>
+<h1>9. System Architecture</h1>
+<p>SignBridge is a single-page web application with no server-side code. A static web server delivers the app, the hand-landmark model (7.8 MB), the WebAssembly runtime and the classifier weights (0.46 MB). After that, everything runs on the user's device.</p>
+<div class="layer"><b>1. User interface</b> (React 18, TypeScript, Tailwind CSS)<br>Dashboard · Live Recognition · Supported Signs · History · How It Works · Settings</div>
+<div class="arrow">↓</div>
+<div class="layer"><b>2. Camera and interaction layer</b><br>getUserMedia camera hook · recognition state machine · keyboard shortcuts · toasts with Undo</div>
+<div class="arrow">↓</div>
+<div class="layer"><b>3. Hand landmark detection</b><br>MediaPipe Hand Landmarker (WebAssembly, GPU with CPU fallback), up to 2 hands × 21 points</div>
+<div class="arrow">↓</div>
+<div class="layer"><b>4. Feature extraction and classification</b><br>normalisation to 85 features → MLP 85-128-64-35 in TypeScript → softmax → 12-frame smoothing</div>
+<div class="arrow">↓</div>
+<div class="layer"><b>5. Storage</b><br>localStorage: preferences and result history (metadata only)</div>
+<figure><figcaption>Figure 9.1: layers of the system.</figcaption></figure>
+<h3>9.1 Recognition flow</h3>
+<ul>
+<li>The user starts the camera and presses Start Recognition (or Space).</li>
+<li>About 12 times per second, the Hand Landmarker returns the 21 landmarks of each visible hand, which are drawn over the mirrored video.</li>
+<li>Hands are ordered left to right, centred on the mean of all points and scaled by the largest distance from that centre, giving 84 coordinates plus a two-hand flag.</li>
+<li>The MLP returns a probability for each of the 35 signs. The last 12 predictions are kept. When 9 of them agree and the averaged confidence is at least 60%, the sign is locked and shown as a result.</li>
+<li>Each pose is also compared with 560 training prototypes; poses far from all of them are marked unknown and cannot lock (Section 10.6).</li>
+<li>The user can press Capture now (Enter), and after 3.5 s without a lock the app stops by itself. If confidence is below 60% or the pose is unknown, the uncertain state is shown with the closest guesses.</li>
+</ul>
+<h3>9.2 Main source files</h3>
+<table>
+<tr><th>File</th><th>Role</th></tr>
+<tr><td><code>src/ml/model.ts</code></td><td>Loads MediaPipe and the weights; detects hands in a video frame</td></tr>
+<tr><td><code>src/ml/classifier.ts</code></td><td>Feature normalisation and MLP forward pass (identical to <code>ml/train.py</code>)</td></tr>
+<tr><td><code>src/hooks/useSignRecognizer.ts</code></td><td>Detection loop, smoothing, locking, landmark overlay</td></tr>
+<tr><td><code>src/pages/LiveRecognition.tsx</code></td><td>Main screen: modes, live read-out, result actions, shortcuts</td></tr>
+<tr><td><code>src/hooks/useShortcuts.ts</code>, <code>src/components/Toast.tsx</code></td><td>Keyboard shortcuts; notifications with Undo</td></tr>
+<tr><td><code>ml/extract_landmarks.py</code>, <code>ml/train.py</code></td><td>Landmark extraction and model training/evaluation/export</td></tr>
+<tr><td><code>scripts/parity-check.mjs</code></td><td>Checks browser predictions equal scikit-learn on 20 test rows</td></tr>
+</table>
+
+<!-- ===================== 10 DATASET & TRAINING ===================== -->
+<h1>10. Dataset and Model Training</h1>
+<h3>10.1 Dataset</h3>
+<table>
+<tr><th>Item</th><th>Detail</th></tr>
+<tr><td>Source</td><td>Indian Sign Language image dataset, Hugging Face <code>Hemg/Indian_sign_language_dataset</code> [7]</td></tr>
+<tr><td>Images</td><td>42,745 RGB images, 128 × 128 pixels, dark background, real hands</td></tr>
+<tr><td>Classes</td><td>35: digits 1–9 and letters A–Z (about 1,200 images each)</td></tr>
+<tr><td>Cleaning</td><td>358 files named "<i>n</i> copy.jpg" (re-saved duplicates) removed → 42,387 images</td></tr>
+<tr><td>Hands detected</td><td>98.79% of images (lowest: S 82.8%, Q 84.5%, C 93.9%); images without hands were excluded</td></tr>
+<tr><td>One vs. two hands</td><td>Digits and C, I, L, O, V are one-handed; A, D, E, F, K, M, T, W, X, Z are two-handed in over 98% of images</td></tr>
+</table>
+<h3>10.2 Features</h3>
+<p>Each image was upscaled to 256 × 256 and passed to MediaPipe Hand Landmarker (up to two hands). Hands are sorted left to right by their mean x coordinate. All landmarks are centred on their joint mean and divided by the largest distance from it, which removes the effect of hand position and distance from the camera. The 2 × 21 × (x, y) coordinates (zeros for a missing second hand) plus a flag for "two hands" give 85 features. To support left-handed signers and mirrored cameras, every training sample was also added in horizontally mirrored form.</p>
+<h3>10.3 Train/test split</h3>
+<p>The images are consecutive frames of a few recordings per class, so neighbouring frames are almost identical. A random 80/20 split would put near-copies of test images into training. Instead, for each class the images were ordered by file number and the <b>last 20% were held out</b> (blocked split): 33,496 training images (66,992 with mirroring) and 8,377 test images. For comparison, the same MLP on a random split scores 99.95%, which shows how much a leaky split inflates the result.</p>
+<h3>10.4 Models compared</h3>
+<table>
+<tr><th>Model</th><th>Configuration</th><th>Test accuracy</th><th>Macro-F1</th><th>Mirrored test acc.</th><th>Train time</th><th>Inference / sample</th></tr>
+<tr><td>kNN</td><td>k = 5</td><td>97.79%</td><td>97.32%</td><td>97.79%</td><td>&lt; 0.1 s</td><td>0.206 ms</td></tr>
+<tr><td>Random Forest</td><td>300 trees</td><td>97.88%</td><td>97.46%</td><td>97.84%</td><td>63.8 s</td><td>0.020 ms</td></tr>
+<tr><td>SVM</td><td>RBF kernel, C = 10</td><td>97.88%</td><td>97.43%</td><td>97.88%</td><td>3.0 s</td><td>0.290 ms</td></tr>
+<tr><td><b>MLP (chosen)</b></td><td>85-128-64-35, ReLU, Adam, early stopping</td><td><b>97.86%</b></td><td><b>97.42%</b></td><td>97.86%</td><td>10.7 s</td><td>0.001 ms</td></tr>
+</table>
+<p>All four models perform within 0.1 percentage points of each other, which shows that the landmark features carry most of the information. The MLP was chosen because its weights are a small JSON file (0.46 MB) and its forward pass is a few lines of TypeScript, with no ML library needed in the browser. The parity check confirms that the browser gives the same top class as scikit-learn on 20 held-out rows (largest probability difference 4.4 × 10<sup>-7</sup>).</p>
+<h3>10.5 Per-class results and errors</h3>
+<p>34 of 35 classes have an F1 of 0.99 or higher. The one weakness is <b>digit 9</b>: 172 of its 240 test images were predicted as <b>S</b> (recall 26.7%), which also lowers the precision of S (53.5%). In the held-out recording the hand shape for 9 looks very much like S in landmark space. More varied training images of 9 and S are the clearest next improvement. In the app, the confidence threshold and the "other candidates" line make this kind of confusion visible to the user.</p>
+<h3>10.6 Unknown-sign detection</h3>
+<p>A softmax classifier always assigns one of the 35 classes, often with near-100% probability, even to a hand shape it has never seen. Early live tests showed exactly this: random gestures were labelled as random letters. We therefore added a second check (<code>ml/ood.py</code>). For each class, k-means picks 16 prototype poses from the training features (560 in total). A live pose whose distance to the nearest prototype exceeds a threshold is treated as <i>unknown</i>: its confidence is capped at 30%, so it can never lock, and the user sees "not a sign shape the model knows" with the closest guesses. The threshold is 1.25 × the 95th-percentile distance of the held-out test set (0.70). It keeps 95.6% of real held-out signs, and rejects 99.3% of synthetic non-signs made by combining hands from two different classes and 99.6% of real signs with randomly bent fingers. In addition, if no sign has locked after 3.5 seconds, the app shows the uncertain state with the closest guesses instead of waiting.</p>
+<figure><img src="../ml/results/confusion_matrix.png" style="width:72%"><figcaption>Figure 10.1: MLP confusion matrix on the blocked test split (row-normalised). The off-diagonal cell is 9 → S.</figcaption></figure>
+
+<!-- ===================== 11 USE CASES ===================== -->
+<h1>11. Use Cases</h1>
+<h3>11.1 Use-case summary</h3>
+<table>
+<tr><th>No.</th><th>Use case</th><th>Summary</th><th>Task</th><th>Main users</th></tr>
+<tr><td>1</td><td>Recognise a sign</td><td>Start the camera, hold a sign, read the result in text and speech</td><td>T1</td><td>ISL users, hearing partners</td></tr>
+<tr><td>2</td><td>Correct or undo a result</td><td>Mark a result incorrect, choose the intended sign, or undo a save</td><td>T2</td><td>All</td></tr>
+<tr><td>3</td><td>Practise a sign</td><td>Pick a sign in Supported Signs, practise it on camera and see if it matches</td><td>T3</td><td>Learners</td></tr>
+<tr><td>4</td><td>Review history</td><td>Search, filter and delete past results</td><td>T4</td><td>All</td></tr>
+<tr><td>5</td><td>Recover from problems</td><td>Camera denied or missing, model not loaded, low confidence</td><td>T5</td><td>All</td></tr>
+</table>
+<h3>11.2 Use case 1: Recognise a sign</h3>
+<table>
+<tr><th>Step</th><th>Actor / system action</th></tr>
+<tr><td>1</td><td>The user opens Live Recognition. The model loads in the background and the badge shows "Model ready".</td></tr>
+<tr><td>2</td><td>The user presses Start Recognition (Space). If the camera is off, the browser asks for permission and the camera starts.</td></tr>
+<tr><td>3</td><td>The system draws the hand skeleton, shows how many hands are detected and the current guess with a confidence bar.</td></tr>
+<tr><td>4</td><td>The user holds the sign still. When 9 of the last 12 frames agree at 60% or more, the system locks the result.</td></tr>
+<tr><td>5</td><td>The system shows the sign in large text, a reference photo, the confidence and other candidates.</td></tr>
+<tr><td>6</td><td>The user confirms (C), marks it incorrect (X), hears it (S) or tries again (R). A notice confirms the save, with Undo (U).</td></tr>
+</table>
+<p><b>Precondition:</b> a camera is available and permission is granted. <b>Alternate flows:</b> camera denied or missing → message with Retry and Demo mode; confidence below 60% on Capture → uncertain state with closest guesses. <b>Postcondition:</b> the result is saved with its feedback, or nothing is saved.</p>
+
+<!-- ===================== 12 WIREFRAMES ===================== -->
+<div class="pb"></div>
+<h1>12. Wireframes and Interaction Design</h1>
+<h3>12.1 Purpose and approach</h3>
+<p>Low-fidelity wireframes were drawn for the five key screens before they were built, so that layout, order of information and interaction could be checked against the user needs from Sections 4 and 5. They are drawn in grey only, so that attention stays on structure rather than colour. Numbered markers link each element to the need it serves, and each wireframe is shown with the matching screen of the working prototype.</p>
+<h3>12.2 Key user tasks</h3>
+<table>
+<tr><th>Task</th><th>User task</th><th>Findings</th><th>Screens</th></tr>
+<tr><td>T1</td><td>Get one fingerspelled sign recognised and shown as text and speech</td><td>F1, F2</td><td>W1, W2, W3</td></tr>
+<tr><td>T2</td><td>Notice when the result is uncertain or wrong and fix or undo it</td><td>F5, F3</td><td>W3, W5</td></tr>
+<tr><td>T3</td><td>Practise a chosen sign against a reference</td><td>F6</td><td>W4, W2</td></tr>
+<tr><td>T4</td><td>Find, review and delete earlier results</td><td>F3</td><td>W5</td></tr>
+<tr><td>T5</td><td>Recover from camera or model problems</td><td>F4</td><td>W2</td></tr>
+</table>
+<h3>12.3 Interaction flow</h3>
+<figure><img src="../docs/wireframes/flow.png" style="width:58%"><figcaption>Figure 12.1: interaction flow between the screens of the prototype.</figcaption></figure>
+
+<h3>12.4 Wireframes and matching prototype screens</h3>
+<p><b>W1 Dashboard</b></p>
+<div class="pair"><figure><img src="../docs/wireframes/W1.png"><figcaption>Wireframe W1</figcaption></figure><figure><img src="../docs/screenshots/S1_dashboard.png"><figcaption>Prototype</figcaption></figure></div>
+<table><tr><th>No.</th><th>Element</th><th>Why it is there (user need)</th><th>Need</th></tr>
+<tr><td>1</td><td>Sidebar navigation</td><td>The same six links on every page, so users always know where they are and can go anywhere in one click</td><td>F4</td></tr>
+<tr><td>2</td><td>Status banner</td><td>Says in plain words what the app can and cannot do (35 static signs, not an interpreter)</td><td>F7</td></tr>
+<tr><td>3</td><td>Hero with Start Recognition</td><td>One clear entry to the main task T1</td><td>F4</td></tr>
+<tr><td>4</td><td>Summary cards and recent activity</td><td>Shows the vocabulary size and recent results without opening History</td><td>F3</td></tr>
+<tr><td>5</td><td>How it works</td><td>Three-step explanation for first-time users</td><td>F6</td></tr></table>
+
+<p><b>W2 Live Recognition (recognising)</b></p>
+<div class="pair"><figure><img src="../docs/wireframes/W2.png"><figcaption>Wireframe W2</figcaption></figure><figure><img src="../docs/screenshots/S3_live_recognising.png"><figcaption>Prototype</figcaption></figure></div>
+<table><tr><th>No.</th><th>Element</th><th>Why it is there (user need)</th><th>Need</th></tr>
+<tr><td>1</td><td>Mode switch: Camera (ML) / Demo</td><td>Works with or without a camera</td><td>F6</td></tr>
+<tr><td>2</td><td>Model status badge</td><td>Shows whether the model is ready and its tested accuracy</td><td>F7</td></tr>
+<tr><td>3</td><td>Mirrored camera with hand skeleton and chip</td><td>Users see that their hands are found, like a mirror</td><td>F2</td></tr>
+<tr><td>4</td><td>Privacy note</td><td>States that frames stay on the device</td><td>F4</td></tr>
+<tr><td>5</td><td>Start/Stop with key hint</td><td>One action that starts and stops recognition; Space shortcut</td><td>F4</td></tr>
+<tr><td>6</td><td>Live guess, confidence bar, top 3</td><td>Continuous feedback while the sign is held</td><td>F2, F5</td></tr>
+<tr><td>7</td><td>Capture now / Stop</td><td>The user decides when to take the result</td><td>F3</td></tr></table>
+
+<p><b>W3 Result, correction and undo</b></p>
+<div class="pair"><figure><img src="../docs/wireframes/W3.png"><figcaption>Wireframe W3</figcaption></figure><figure><img src="../docs/screenshots/S4_result.png"><figcaption>Prototype</figcaption></figure></div>
+<table><tr><th>No.</th><th>Element</th><th>Why it is there (user need)</th><th>Need</th></tr>
+<tr><td>1</td><td>Mode badge and time</td><td>Says the result came from the model and when</td><td>F7</td></tr>
+<tr><td>2</td><td>Large label and reference photo</td><td>Readable from a distance; the photo lets both people check the hand shape</td><td>F2</td></tr>
+<tr><td>3</td><td>Confidence and other candidates</td><td>Shows how sure the model is and what else it might be</td><td>F5</td></tr>
+<tr><td>4</td><td>Confirm / Incorrect / Speak / Try again with key hints</td><td>One click or key for each next step; speech for hearing partners</td><td>F2, F3</td></tr>
+<tr><td>5</td><td>Correction form</td><td>Records the intended sign when the model was wrong</td><td>F3</td></tr>
+<tr><td>6</td><td>Saved notice with Undo and View history</td><td>Closure plus a way back</td><td>F3</td></tr>
+<tr><td>7</td><td>Uncertain state</td><td>Below 60% the app does not guess; it shows the closest options</td><td>F5</td></tr></table>
+
+<p><b>W4 Supported Signs</b></p>
+<div class="pair"><figure><img src="../docs/wireframes/W4.png"><figcaption>Wireframe W4</figcaption></figure><figure><img src="../docs/screenshots/S8_supported_signs.png"><figcaption>Prototype</figcaption></figure></div>
+<table><tr><th>No.</th><th>Element</th><th>Why it is there (user need)</th><th>Need</th></tr>
+<tr><td>1</td><td>Search by letter or number ( / )</td><td>Find a sign quickly</td><td>F6</td></tr>
+<tr><td>2</td><td>Category filter</td><td>Letters or digits only</td><td>F6</td></tr>
+<tr><td>3</td><td>Cards with reference photos</td><td>Recognition rather than recall of hand shapes</td><td>F6, F2</td></tr>
+<tr><td>4</td><td>Detail dialog with Practise on camera</td><td>One-handed / two-handed note and a direct path to practise (task T3)</td><td>F6</td></tr></table>
+
+<p><b>W5 History</b></p>
+<div class="pair"><figure><img src="../docs/wireframes/W5.png"><figcaption>Wireframe W5</figcaption></figure><figure><img src="../docs/screenshots/S10_history.png"><figcaption>Prototype</figcaption></figure></div>
+<table><tr><th>No.</th><th>Element</th><th>Why it is there (user need)</th><th>Need</th></tr>
+<tr><td>1</td><td>Search ( / )</td><td>Find a past result</td><td>F3</td></tr>
+<tr><td>2</td><td>Feedback filter</td><td>Show only correct, incorrect or pending results</td><td>F3</td></tr>
+<tr><td>3</td><td>Clear History (with confirm and Undo)</td><td>Remove everything safely</td><td>F3, F4</td></tr>
+<tr><td>4</td><td>Rows with mode, confidence, correction</td><td>Review what the model said and what the user corrected</td><td>F5</td></tr>
+<tr><td>5</td><td>Per-entry delete</td><td>Remove one mistaken entry</td><td>F3</td></tr>
+<tr><td>6</td><td>Undo notice</td><td>Every delete can be reversed</td><td>F3</td></tr></table>
+
+<h3>12.5 Design rationale: usability heuristics</h3>
+<table>
+<tr><th>Heuristic</th><th>How it is applied in the design</th><th>Where</th></tr>
+<tr><td>Visibility of system status</td><td>Model-ready badge, hands-detected badge, skeleton overlay, live confidence, Live camera badge, sidebar camera status</td><td>W2, W3</td></tr>
+<tr><td>Match with the real world</td><td>Mirrored camera; reference photos; plain words ("Hold the sign still ~1 s")</td><td>W2, W3, W4</td></tr>
+<tr><td>User control and freedom</td><td>Stop, Reset, Try again, Undo, Demo mode, auto-save switch</td><td>W2, W3, W5</td></tr>
+<tr><td>Consistency and standards</td><td>Same layout, buttons and colours on every page; one result card for both modes</td><td>W1–W5</td></tr>
+<tr><td>Error prevention</td><td>Confidence threshold, 9-of-12 agreement, confirmation before Clear History</td><td>W2, W3, W5</td></tr>
+<tr><td>Recognition rather than recall</td><td>Reference photos, key hints on buttons, shortcut list (?), correction from a list</td><td>W3, W4</td></tr>
+<tr><td>Flexibility and efficiency</td><td>Single-key shortcuts; Capture now; auto-save mode for continuous spelling</td><td>W2, W3</td></tr>
+<tr><td>Aesthetic and minimalist design</td><td>One main task per screen; secondary actions as ghost buttons</td><td>W1–W5</td></tr>
+<tr><td>Help users recover from errors</td><td>Specific camera error messages with Retry; model error offers Demo mode; uncertain state with tips</td><td>W2, W3</td></tr>
+<tr><td>Help and documentation</td><td>How It Works page, shortcut dialog, inline tips</td><td>All</td></tr>
+</table>
+
+<h3>12.6 Design rationale: Shneiderman's Eight Golden Rules [6]</h3>
+<table>
+<tr><th>No.</th><th>Golden rule</th><th>How it is applied in the design</th><th>Where</th><th>Need</th></tr>
+<tr><td>1</td><td>Strive for consistency</td><td>Same sidebar, header, card layout and button styles on every page. Green always means confident or confirmed, amber uncertain, red error. Demo and camera modes share one result card. Shortcut letters match the action names (C confirm, S speak, R retry).</td><td>W1–W5</td><td>F4</td></tr>
+<tr><td>2</td><td>Enable frequent users to use shortcuts</td><td>Single-key shortcuts: Space start/stop, Enter capture, C confirm, X incorrect, S speak, R retry, K camera, U undo, / search, ? list. Key hints are printed on the buttons, shortcuts can be turned off in Settings, and they never fire while typing. "Practise" jumps from a sign straight to the camera.</td><td>W2, W3, W4, W5</td><td>F4</td></tr>
+<tr><td>3</td><td>Offer informative feedback</td><td>Model-ready badge with accuracy; hand skeleton drawn on the video; "2 hands detected"; live guess with confidence bar and top 3; notice after every save.</td><td>W2, W3</td><td>F2, F5</td></tr>
+<tr><td>4</td><td>Design dialogs to yield closure</td><td>Recognition ends in a locked result card. Confirm or Incorrect ends the task with "'A' confirmed and saved" and a View history link.</td><td>W3, W5</td><td>F3</td></tr>
+<tr><td>5</td><td>Offer error prevention and simple error handling</td><td>A sign locks only after 9 of 12 frames agree. Below 60% confidence the app shows an uncertain state with the closest guesses instead of a wrong answer. Clear camera messages for denied, missing and busy cameras. If the model fails to load, Demo mode is offered. Clear History asks first.</td><td>W2, W3, W5</td><td>F5</td></tr>
+<tr><td>6</td><td>Permit easy reversal of actions</td><td>Undo (button or U) after confirming, marking incorrect, deleting one entry and clearing all history. Undo after a save also puts the result back on screen. Stop, Reset and Try again are always visible.</td><td>W3, W5</td><td>F3</td></tr>
+<tr><td>7</td><td>Support internal locus of control</td><td>The camera starts only on request and recognition only on command. Capture now lets the user decide when to lock. The user chooses manual confirm or auto-save in Settings. Nothing leaves the device.</td><td>W2, W3, Settings</td><td>F3, F4</td></tr>
+<tr><td>8</td><td>Reduce short-term memory load</td><td>Reference photo next to the result, so the user does not have to remember the hand shape; Supported Signs with photos; ? lists every shortcut; key hints on buttons; recent results on the Dashboard.</td><td>W1, W3, W4</td><td>F6, F2</td></tr>
+</table>
+
+<!-- ===================== 13 PROTOTYPE ===================== -->
+<div class="pb"></div>
+<h1>13. Working Prototype</h1>
+<p>The prototype is a working web application, not a mock-up: it uses the real camera and the trained model. To run it, install Node.js 18 or newer, run <code>npm install</code> and <code>npm run dev</code> in the project folder, and open http://localhost:5173 in Chrome, Edge or Safari. A production build (<code>npm run build</code>) can be served from any static web host.</p>
+<div class="pair"><figure><img src="../docs/screenshots/S2_live_idle.png"><figcaption>Figure 13.1: Live Recognition, camera on, model ready.</figcaption></figure><figure><img src="../docs/screenshots/S5_correction.png"><figcaption>Figure 13.2: marking a result incorrect and choosing the intended sign.</figcaption></figure></div>
+<div class="pair"><figure><img src="../docs/screenshots/S6_saved_toast_undo.png"><figcaption>Figure 13.3: saved notice with View history and Undo.</figcaption></figure><figure><img src="../docs/screenshots/S7_shortcuts_dialog.png"><figcaption>Figure 13.4: keyboard shortcuts dialog (?).</figcaption></figure></div>
+<div class="pair"><figure><img src="../docs/screenshots/S9_sign_detail.png"><figcaption>Figure 13.5: sign detail with Practise on camera.</figcaption></figure><figure><img src="../docs/screenshots/S13_uncertain_demo.png"><figcaption>Figure 13.6: uncertain-result state (Demo mode).</figcaption></figure></div>
+<div class="pair"><figure><img src="../docs/screenshots/S14_dark_mode.png"><figcaption>Figure 13.7: dark mode.</figcaption></figure><figure><img src="../docs/screenshots/S12_settings.png" style="max-height:330px"><figcaption>Figure 13.8: Settings (theme, text size, motion, speech, manual confirm, shortcuts, privacy).</figcaption></figure></div>
+<h3>13.1 Implementation components</h3>
+<table>
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td>React 18, TypeScript, Vite</td><td>Single-page application and build</td></tr>
+<tr><td>Tailwind CSS, lucide-react</td><td>Custom styling and icons (no prebuilt UI kit)</td></tr>
+<tr><td>MediaPipe Tasks Vision (WebAssembly)</td><td>Hand landmark detection in the browser</td></tr>
+<tr><td>scikit-learn, NumPy, MediaPipe (Python)</td><td>Landmark extraction, training, evaluation and export</td></tr>
+<tr><td>Web Speech API</td><td>Speaking the result aloud</td></tr>
+<tr><td>localStorage</td><td>Preferences and history (metadata only)</td></tr>
+<tr><td>Playwright</td><td>Automated end-to-end test and screenshots with a fake camera</td></tr>
+</table>
+
+<!-- ===================== 14 POSTER ===================== -->
+<h1>14. Research Poster</h1>
+<p>The research poster (A1 portrait) summarises the problem, user groups, method, personas, findings, literature insights, research gaps, system, ML results, prototype screens and the Eight Golden Rules. The full-resolution file is <code>docs/poster/SignBridge_A1_Poster.pdf</code>.</p>
+<figure><img src="../docs/poster/poster.png" style="max-height:860px;width:auto"><figcaption>Figure 14.1: research poster.</figcaption></figure>
+
+<!-- ===================== 15 TESTING ===================== -->
+<h1>15. Testing and Results</h1>
+<h3>15.1 Model evaluation</h3>
+<p>On the blocked held-out split (8,377 images, 35 classes) the MLP reached 97.86% accuracy and 97.42% macro-F1, and the same score on mirrored test images (Section 10). The main error is 9 predicted as S.</p>
+<h3>15.2 Functional and end-to-end tests</h3>
+<table>
+<tr><th>No.</th><th>Test</th><th>Expected result</th><th>Result</th></tr>
+<tr><td>1</td><td>TypeScript type check and production build</td><td>No errors</td><td>Pass</td></tr>
+<tr><td>2</td><td>Parity check: browser MLP vs. scikit-learn on 20 held-out rows</td><td>Same top class</td><td>Pass (20/20, max difference 4.4 × 10<sup>-7</sup>)</td></tr>
+<tr><td>3</td><td>Automated browser test with a fake camera showing a held-out "L" image: Space → result → C → U</td><td>"L" recognised, saved, then removed by Undo</td><td>Pass</td></tr>
+<tr><td>4</td><td>Two-hand sign "A" from a held-out image</td><td>Two hands detected, skeleton drawn, "A" locked</td><td>Pass</td></tr>
+<tr><td>4b</td><td>Non-sign pose (held-out "L" rotated 90°)</td><td>Marked unknown, uncertain state with closest guesses, no wrong label</td><td>Pass</td></tr>
+<tr><td>5</td><td>Camera permission denied / no camera</td><td>Clear message with Retry; Demo mode still usable</td><td>Pass</td></tr>
+<tr><td>6</td><td>Shortcuts while typing in the search field</td><td>No shortcut fires</td><td>Pass</td></tr>
+<tr><td>7</td><td>Delete one history entry, then Undo</td><td>Entry restored</td><td>Pass</td></tr>
+<tr><td>8</td><td>Responsive layout at 390 px width; dark mode</td><td>Usable layout, readable contrast</td><td>Pass</td></tr>
+</table>
+<!-- ===================== 16 CONCLUSION ===================== -->
+<h1>16. Conclusion and Future Scope</h1>
+<p>SignBridge shows that static ISL fingerspelling can be recognised in real time entirely inside a web browser. It combines MediaPipe hand landmarks with a small neural network that reaches 97.86% accuracy on held-out data. The HCI work produced an interface that treats the model as fallible: it shows confidence and alternatives, refuses to guess below a threshold, and makes every action reversible. All eight of Shneiderman's Golden Rules are implemented and mapped to specific screens.</p>
+<p><b>Limitations.</b> The user survey is small (10 respondents, a convenience sample, mostly hearing people) and some self-reported group labels are inconsistent with the stated ISL familiarity, so the findings guide the design but are not statistically representative. The dataset contains few signers against one dark background, so accuracy on new people, skin tones, lighting and backgrounds is expected to be lower. Digit 9 is often confused with S. Only static signs are covered.</p>
+<p><b>Future scope.</b></p>
+<ul>
+<li>Collect consented data from more signers and backgrounds, and fine-tune with the corrections users already record.</li>
+<li>Add word-level signs with a sequence model (e.g. LSTM or transformer over landmark sequences) trained on INCLUDE [3].</li>
+<li>Join fingerspelled letters into words with a word-completion step.</li>
+<li>Run a usability study with Deaf ISL users and their communication partners.</li>
+</ul>
+
+<!-- ===================== 17 REFERENCES ===================== -->
+<h1>17. References</h1>
+<p>[1] D. Bragg, O. Koller, M. Bellard, L. Berke, P. Boudreault, A. Braffort, N. Caselli, M. Huenerfauth, H. Kacorri, T. Verhoef, C. Vogler and M. R. Morris, "Sign Language Recognition, Generation, and Translation: An Interdisciplinary Perspective," in <i>Proc. ASSETS '19</i>, 2019, pp. 16–31. doi:10.1145/3308561.3353774.</p>
+<p>[2] I. A. Adeyanju, O. O. Bello and M. A. Adegboye, "Machine learning methods for sign language recognition: A critical review and analysis," <i>Intelligent Systems with Applications</i>, vol. 12, 200056, 2021. doi:10.1016/j.iswa.2021.200056.</p>
+<p>[3] A. Sridhar, R. G. Ganesan, P. Kumar and M. Khapra, "INCLUDE: A Large Scale Dataset for Indian Sign Language Recognition," in <i>Proc. 28th ACM Int. Conf. on Multimedia</i>, 2020. doi:10.1145/3394171.3413528.</p>
+<p>[4] G. Velmathi and K. Goyal, "Indian Sign Language Recognition Using Mediapipe Holistic," arXiv:2304.10256, 2023.</p>
+<p>[5] F. Zhang, V. Bazarevsky, A. Vakunov, A. Tkachenka, G. Sung, C.-L. Chang and M. Grundmann, "MediaPipe Hands: On-device Real-time Hand Tracking," arXiv:2006.10214, 2020.</p>
+<p>[6] B. Shneiderman, C. Plaisant, M. Cohen, S. Jacobs, N. Elmqvist and N. Diakopoulos, <i>Designing the User Interface: Strategies for Effective Human-Computer Interaction</i>, 6th ed. Pearson, 2016.</p>
+<p>[7] Indian_sign_language_dataset (Hemg), Hugging Face, 42,745 images, 35 classes. https://huggingface.co/datasets/Hemg/Indian_sign_language_dataset</p>
+</body></html>

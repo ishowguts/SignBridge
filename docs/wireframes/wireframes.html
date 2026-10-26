@@ -1,0 +1,150 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>SignBridge wireframes</title>
+<style>
+  body{margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#333}
+  .wf{width:1000px;height:620px;position:relative;border:2px solid #444;margin:20px;background:#fff;overflow:hidden}
+  .side{position:absolute;left:0;top:0;bottom:0;width:170px;background:#eee;border-right:2px solid #999;padding:14px;box-sizing:border-box}
+  .side .logo{height:28px;background:#ccc;margin-bottom:18px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px}
+  .side .nav{height:24px;border:1px solid #aaa;margin-bottom:8px;font-size:12px;display:flex;align-items:center;padding-left:8px;background:#fafafa}
+  .side .nav.on{background:#bbb;font-weight:bold}
+  .top{position:absolute;left:170px;right:0;top:0;height:52px;border-bottom:2px solid #999;display:flex;align-items:center;padding:0 16px;gap:10px;box-sizing:border-box}
+  .main{position:absolute;left:190px;right:20px;top:70px;bottom:20px}
+  .box{position:absolute;border:2px solid #888;background:#f4f4f4;box-sizing:border-box;font-size:12px;padding:6px;color:#555}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:2px solid #666;background:#ddd;height:30px;padding:0 12px;font-size:12px;margin-right:6px;box-sizing:border-box}
+  .btn.p{background:#999;color:#fff}
+  .x{background:repeating-linear-gradient(45deg,#e6e6e6,#e6e6e6 8px,#f3f3f3 8px,#f3f3f3 16px)}
+  .big{font-size:56px;font-weight:bold;color:#666;text-align:center}
+  .bar{height:10px;border:1px solid #888;background:linear-gradient(90deg,#999 72%,#eee 72%)}
+  .m{position:absolute;width:24px;height:24px;border-radius:50%;background:#222;color:#fff;font-size:13px;font-weight:bold;display:flex;align-items:center;justify-content:center;z-index:5}
+  .t{font-size:13px;font-weight:bold;color:#444}
+  .line{height:8px;background:#ccc;margin:6px 0}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .card{border:2px solid #aaa;height:120px;background:#f4f4f4;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;font-size:12px;padding:4px}
+  .card .img{flex:1;width:100%;margin-bottom:4px}
+  .row{display:flex;gap:10px;border-bottom:1px solid #bbb;padding:8px 4px;font-size:12px}
+  .row span{flex:1}
+  kbd{border:1px solid #777;border-radius:3px;padding:0 3px;font-size:10px;margin-left:4px}
+</style></head><body>
+
+<!-- W1 Dashboard -->
+<div class="wf" id="W1">
+  <div class="side"><div class="logo">SignBridge</div><div class="nav on">Dashboard</div><div class="nav">Live Recognition</div><div class="nav">Supported Signs</div><div class="nav">History</div><div class="nav">How It Works</div><div class="nav">Settings</div></div>
+  <div class="top"><span class="t" style="flex:1">Dashboard</span><span class="btn">⌨ ?</span><span class="btn">☾</span><span class="btn">⚙</span></div>
+  <div class="m" style="left:150px;top:90px">1</div>
+  <div class="main">
+    <div class="box" style="left:0;top:0;right:0;height:46px">Status banner: what the app does and its limits (35 static ISL signs, on-device)</div>
+    <div class="m" style="left:-20px;top:10px">2</div>
+    <div class="box x" style="left:0;top:58px;right:0;height:150px"><div class="t">Hero: "Recognise ISL letters and numbers from your camera"</div><div style="position:absolute;bottom:14px;left:14px"><span class="btn p">Start Recognition</span><span class="btn">Explore Signs</span></div></div>
+    <div class="m" style="left:-20px;top:150px">3</div>
+    <div class="box" style="left:0;top:222px;width:250px;height:80px"><div class="t">Signs</div><div class="big" style="font-size:26px">35</div></div>
+    <div class="box" style="left:262px;top:222px;width:250px;height:80px"><div class="t">Results saved</div><div class="big" style="font-size:26px">n</div></div>
+    <div class="box" style="left:524px;top:222px;right:0;height:80px"><div class="t">Mode</div>On-device ML</div>
+    <div class="m" style="left:-20px;top:250px">4</div>
+    <div class="box" style="left:0;top:316px;width:380px;bottom:0"><div class="t">Recent activity</div><div class="row"><span>A</span><span>time</span><span>[correct]</span></div><div class="row"><span>7</span><span>time</span><span>[incorrect]</span></div><div class="row"><span>L</span><span>time</span><span>[pending]</span></div></div>
+    <div class="m" style="left:360px;top:330px">5</div>
+    <div class="box" style="left:396px;top:316px;right:0;bottom:0"><div class="t">How it works: Capture → Recognise → Communicate</div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+  </div>
+</div>
+
+<!-- W2 Live recognition (recognising) -->
+<div class="wf" id="W2">
+  <div class="side"><div class="logo">SignBridge</div><div class="nav">Dashboard</div><div class="nav on">Live Recognition</div><div class="nav">Supported Signs</div><div class="nav">History</div><div class="nav">How It Works</div><div class="nav">Settings</div></div>
+  <div class="top"><span class="t" style="flex:1">Live Recognition</span><span class="btn">⌨ ?</span><span class="btn">☾</span><span class="btn">⚙</span></div>
+  <div class="main">
+    <div class="box" style="left:0;top:0;width:330px;height:38px;padding:4px"><span class="btn p">Camera (ML model)</span><span class="btn">Demo (no camera)</span></div>
+    <div class="m" style="left:-20px;top:6px">1</div>
+    <div class="box" style="right:0;top:4px;width:260px;height:30px">Model ready · NN% test accuracy</div>
+    <div class="m" style="right:262px;top:6px">2</div>
+    <div class="box x" style="left:0;top:52px;width:380px;height:280px"><div class="t">Live camera (mirrored)</div><div style="position:absolute;left:10px;top:30px;border:1px solid #666;background:#fff;padding:2px 6px">✋ 2 hands · A 82%</div><svg width="360" height="220" style="position:absolute;left:10px;top:50px"><polyline points="120,180 130,120 140,70 150,40" fill="none" stroke="#555" stroke-width="3"/><polyline points="120,180 160,110 170,60" fill="none" stroke="#555" stroke-width="3"/><polyline points="120,180 185,120 195,75" fill="none" stroke="#555" stroke-width="3"/><polyline points="230,180 240,120 250,80" fill="none" stroke="#555" stroke-width="3"/><polyline points="230,180 270,120 285,90" fill="none" stroke="#555" stroke-width="3"/></svg></div>
+    <div class="m" style="left:-20px;top:60px">3</div>
+    <div class="box" style="left:0;top:344px;width:380px;height:44px"><span class="btn">Stop Camera <kbd>K</kbd></span><span class="btn">Switch Camera</span></div>
+    <div class="box" style="left:0;top:398px;width:380px;height:40px">Privacy: frames analysed on device only</div>
+    <div class="m" style="left:-20px;top:405px">4</div>
+    <div class="box" style="left:400px;top:52px;right:0;bottom:0">
+      <span class="btn">Stop <kbd>Space</kbd></span> Each sign waits for your confirmation
+      <div class="box" style="left:10px;right:10px;top:50px;bottom:10px;background:#fff">
+        <div>[2 hands detected]  &nbsp;&nbsp; Hold the sign still ~1 s</div>
+        <div style="text-align:center;margin-top:30px">Current guess</div><div class="big">A</div>
+        <div class="bar" style="margin:6px 60px"></div>
+        <div style="text-align:center">72% · locks at 60%+ when steady</div>
+        <div style="text-align:center;margin-top:6px">Top 3: A 72% · S 15% · E 6%</div>
+        <div style="position:absolute;left:10px;bottom:10px"><span class="btn p">Capture now <kbd>Enter</kbd></span><span class="btn">Stop <kbd>Space</kbd></span></div>
+      </div>
+    </div>
+    <div class="m" style="left:388px;top:58px">5</div>
+    <div class="m" style="left:480px;top:180px">6</div>
+    <div class="m" style="left:410px;top:470px">7</div>
+  </div>
+</div>
+
+<!-- W3 Result & correction -->
+<div class="wf" id="W3">
+  <div class="side"><div class="logo">SignBridge</div><div class="nav">Dashboard</div><div class="nav on">Live Recognition</div><div class="nav">Supported Signs</div><div class="nav">History</div><div class="nav">How It Works</div><div class="nav">Settings</div></div>
+  <div class="top"><span class="t" style="flex:1">Live Recognition — result</span></div>
+  <div class="main">
+    <div class="box x" style="left:0;top:0;width:330px;height:240px">Camera (paused on result)</div>
+    <div class="box" style="left:350px;top:0;right:0;height:300px;background:#fff">
+      <div>[Recognised by on-device model] <span style="float:right">12:41:07</span></div>
+      <div style="display:flex;justify-content:center;align-items:center;gap:40px;margin-top:20px"><div class="big">A</div><div class="x" style="width:100px;height:100px;border:2px solid #888;display:flex;align-items:flex-end;justify-content:center">reference</div></div>
+      <div style="margin-top:16px">Model confidence <span style="float:right">86%</span></div><div class="bar"></div>
+      <div style="margin-top:6px">Other candidates: S 8% · E 3%</div>
+    </div>
+    <div class="m" style="left:338px;top:4px">1</div>
+    <div class="m" style="left:640px;top:60px">2</div>
+    <div class="m" style="left:338px;top:200px">3</div>
+    <div class="box" style="left:350px;top:312px;right:0;height:46px"><span class="btn p">Confirm <kbd>C</kbd></span><span class="btn">Incorrect <kbd>X</kbd></span><span class="btn">Speak <kbd>S</kbd></span><span class="btn">Try Again <kbd>R</kbd></span></div>
+    <div class="m" style="left:338px;top:322px">4</div>
+    <div class="box" style="left:350px;top:370px;right:0;height:84px">What was the intended sign? (optional)<div style="border:1px solid #888;height:24px;margin:6px 0;background:#fff">▾ select A–Z, 1–9</div><span class="btn">Submit Feedback</span><span class="btn">Skip</span></div>
+    <div class="m" style="left:338px;top:380px">5</div>
+    <div class="box" style="left:200px;right:160px;bottom:0;height:42px;background:#555;color:#fff">✓ "A" confirmed and saved. &nbsp; <u>View history</u> &nbsp; <b>↶ Undo (U)</b> &nbsp; ✕</div>
+    <div class="m" style="left:176px;bottom:8px">6</div>
+    <div class="box" style="left:0;top:260px;width:330px;height:150px"><div class="t">Uncertain state (confidence &lt; 60%)</div>"Not confident enough. Hold the sign still…"<br>Closest guesses: M 41%, N 33%, S 12%<br><br><span class="btn">Try Again</span><span class="btn">Dismiss</span></div>
+    <div class="m" style="left:-20px;top:268px">7</div>
+  </div>
+</div>
+
+<!-- W4 Supported signs -->
+<div class="wf" id="W4">
+  <div class="side"><div class="logo">SignBridge</div><div class="nav">Dashboard</div><div class="nav">Live Recognition</div><div class="nav on">Supported Signs</div><div class="nav">History</div><div class="nav">How It Works</div><div class="nav">Settings</div></div>
+  <div class="top"><span class="t" style="flex:1">Supported Signs</span></div>
+  <div class="main">
+    <div class="box" style="left:0;top:0;right:0;height:40px">Vocabulary: static ISL fingerspelling A–Z and 1–9 (reference photos from dataset)</div>
+    <div class="box" style="left:0;top:52px;width:420px;height:36px;background:#fff">🔍 Type a letter or number… ( / )</div>
+    <div class="m" style="left:-20px;top:58px">1</div>
+    <div class="box" style="left:440px;top:52px;right:0;height:36px;padding:2px"><span class="btn p">All</span><span class="btn">Letters</span><span class="btn">Digits</span></div>
+    <div class="m" style="left:428px;top:58px">2</div>
+    <div style="position:absolute;left:0;right:0;top:104px" class="grid">
+      <div class="card"><div class="img x"></div>A · <span class="btn" style="height:20px">Practise</span></div><div class="card"><div class="img x"></div>B · Practise</div><div class="card"><div class="img x"></div>C · Practise</div><div class="card"><div class="img x"></div>D · Practise</div><div class="card"><div class="img x"></div>E · Practise</div><div class="card"><div class="img x"></div>F · Practise</div>
+      <div class="card"><div class="img x"></div>G</div><div class="card"><div class="img x"></div>H</div><div class="card"><div class="img x"></div>I</div><div class="card"><div class="img x"></div>J</div><div class="card"><div class="img x"></div>K</div><div class="card"><div class="img x"></div>L</div>
+    </div>
+    <div class="m" style="left:-20px;top:120px">3</div>
+    <div class="box" style="left:560px;top:200px;width:240px;height:300px;background:#fff;border-width:3px"><div class="t">Detail dialog</div><div class="x" style="height:150px;border:1px solid #999;margin:6px 0"></div>A · Letters · [One-handed sign]<div class="line"></div><span class="btn p">Practise on camera</span><span class="btn">Close</span></div>
+    <div class="m" style="left:548px;top:206px">4</div>
+  </div>
+</div>
+
+<!-- W5 History -->
+<div class="wf" id="W5">
+  <div class="side"><div class="logo">SignBridge</div><div class="nav">Dashboard</div><div class="nav">Live Recognition</div><div class="nav">Supported Signs</div><div class="nav on">History</div><div class="nav">How It Works</div><div class="nav">Settings</div></div>
+  <div class="top"><span class="t" style="flex:1">Recognition History</span></div>
+  <div class="main">
+    <div class="box" style="left:0;top:0;right:0;height:40px">Only metadata stored locally · deleting is undoable</div>
+    <div class="box" style="left:0;top:52px;width:300px;height:36px;background:#fff">🔍 Search by label… ( / )</div>
+    <div class="m" style="left:-20px;top:58px">1</div>
+    <div class="box" style="left:316px;top:52px;width:380px;height:36px;padding:2px"><span class="btn p">All</span><span class="btn">Correct</span><span class="btn">Incorrect</span><span class="btn">Pending</span></div>
+    <div class="m" style="left:304px;top:58px">2</div>
+    <div class="box" style="right:0;top:52px;width:100px;height:36px;padding:2px"><span class="btn">Clear History</span></div>
+    <div class="m" style="right:102px;top:58px">3</div>
+    <div class="box" style="left:0;right:0;top:104px;bottom:60px;background:#fff">
+      <div class="row" style="font-weight:bold"><span>Sign</span><span>Date &amp; time</span><span>Mode</span><span>Feedback</span><span style="flex:.3"></span></div>
+      <div class="row"><span>A</span><span>25 Oct 12:41</span><span>[ML · 86%]</span><span>✓ correct</span><span style="flex:.3">🗑</span></div>
+      <div class="row"><span>M (corrected: N)</span><span>25 Oct 12:39</span><span>[ML · 64%]</span><span>✗ incorrect</span><span style="flex:.3">🗑</span></div>
+      <div class="row"><span>7</span><span>25 Oct 12:35</span><span>[Demo]</span><span>– pending</span><span style="flex:.3">🗑</span></div>
+    </div>
+    <div class="m" style="left:-20px;top:150px">4</div>
+    <div class="m" style="right:-6px;top:150px">5</div>
+    <div class="box" style="left:200px;right:160px;bottom:0;height:42px;background:#555;color:#fff">✓ Entry deleted. &nbsp; <b>↶ Undo (U)</b> &nbsp; ✕</div>
+    <div class="m" style="left:176px;bottom:8px">6</div>
+  </div>
+</div>
+</body></html>
